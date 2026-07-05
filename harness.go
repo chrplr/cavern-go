@@ -30,5 +30,10 @@ func keyRight() bool { return app.Keyboard.Held(sdl.SCANCODE_RIGHT) }
 func keyUp() bool    { return app.Keyboard.Held(sdl.SCANCODE_UP) }
 func keySpace() bool { return app.Keyboard.Held(sdl.SCANCODE_SPACE) }
 
-// spacePressed reports whether space was just pressed this frame (rising edge).
-func spacePressed() bool { return app.Keyboard.Pressed(sdl.SCANCODE_SPACE) }
+// spacePressed reports whether a start/fire key — Space or Enter — was just
+// pressed this frame (rising edge).
+func spacePressed() bool {
+	return app.Keyboard.Pressed(sdl.SCANCODE_SPACE) ||
+		app.Keyboard.Pressed(sdl.SCANCODE_RETURN) ||
+		app.Keyboard.Pressed(sdl.SCANCODE_KP_ENTER)
+}
