@@ -1,5 +1,7 @@
 # Cavern — Go port
 
+[![Latest release](https://img.shields.io/github/v/release/chrplr/cavern-go)](https://github.com/chrplr/cavern-go/releases/latest)
+
 **▶ Play it in your browser: <https://chrplr.github.io/cavern-go/>**
 
 A Go re-implementation of the Pygame Zero game **Cavern** from *Code the Classics
