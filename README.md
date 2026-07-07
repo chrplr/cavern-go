@@ -28,6 +28,16 @@ The picture below shows which key each action uses. They're all arrow keys, `Spa
 
 ![Keyboard controls for Cavern](keyboard.svg)
 
+## How to play
+
+**The goal.** Clear every robot out of the cavern to move on to the next, tougher one. The game keeps going, level after level, for as long as you survive.
+
+**Your weapon is air.** You don't shoot robots directly — you blow orbs at them. **Hold** the blow key to puff up an orb and send it drifting across the cavern. An orb that reaches a robot traps it inside and floats up, carrying it off the top of the screen. As the trapped robot pops out it turns into a piece of **fruit** — run over it to collect points, and some fruit restores health.
+
+**Staying alive.** Robots throw bolts at you and hurt you on contact; each hit costs health, and losing all your health costs a life. You start with a small stock of lives, so keep moving.
+
+**Getting around.** Move with **Left** / **Right** and jump with **Up** to reach the higher platforms. Press **Space** / **Enter** to start.
+
 ## Download
 
 Prebuilt, self-contained binaries — no install, no dependencies, assets embedded.
