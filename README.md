@@ -4,8 +4,6 @@
 
 **▶ Play it in your browser: <https://chrplr.github.io/cavern-go/>**
 
-*The in-browser version runs at the correct speed on any monitor, including high-refresh (120/144 Hz) displays, since [pgzgo](https://github.com/chrplr/pgzgo) v0.4.0.*
-
 A Go re-implementation of the Pygame Zero game **Cavern** from *Code the Classics
 Volume 1* (Raspberry Pi Press), built on
 [go-sdl3](https://github.com/Zyko0/go-sdl3) and the
@@ -25,6 +23,10 @@ Keyboard only.
 | Blow / launch orb | Space (hold) |
 | Start  | Space / Enter |
 | Quit   | Esc |
+
+The picture below shows which key each action uses. They're all arrow keys, `Space` and `Enter`, which sit in the same place on every keyboard layout.
+
+![Keyboard controls for Cavern](keyboard.svg)
 
 ## Download
 
