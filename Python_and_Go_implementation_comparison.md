@@ -15,8 +15,9 @@ Cavern is the simplest of the games ported in this repo: a single‑screen
 *Bubble Bobble*‑style platformer with hardcoded level layouts, no scrolling, no
 tilemaps, no save files. The Python original is ~780 lines in one file; the Go
 port is ~1,050 lines across 16 focused files. The extra volume is almost
-entirely boilerplate that Python gets for free: explicit struct definitions,
-per‑type slice filters, and the asset/sound plumbing that Pygame Zero hides.
+entirely language-level boilerplate that Python gets for free: explicit struct
+definitions and per-type slice filters. The asset/sound/loop plumbing itself now
+lives in the pgzgo harness, not in this repo.
 
 ---
 
@@ -52,9 +53,9 @@ culling, and level‑end detection) — are ported statement‑for‑statement.
 | Fruit / Player / Robot | those classes | `fruit.go`, `player.go`, `robot.go` |
 | Game (levels, spawning, draw) | `Game` | `game.go` |
 | Sprite font + status bar | `draw_text`/`draw_status` | `text.go` |
-| Input | `keyboard.*`/`space_pressed` | `input.go` |
-| Assets | Pygame Zero `images`/`screen.blit` | `assets.go` |
-| Audio | Pygame Zero `sounds`/`music` | `audio.go` |
+| Input | `keyboard.*`/`space_pressed` | pgzgo `Keyboard` snapshot (latch in `harness.go`) |
+| Assets | Pygame Zero `images`/`screen.blit` | pgzgo `Screen` |
+| Audio | Pygame Zero `sounds`/`music` | pgzgo `Audio` |
 | State machine / entry point | `update`/`draw`/module code | `main.go` |
 
 ---
@@ -169,24 +170,22 @@ ambiguity.
 
 ---
 
-## 5. Framework substitution: Pygame Zero → go‑sdl3
+## 5. Framework: Pygame Zero → pgzgo (on go-sdl3)
 
-| Pygame Zero feature | Go / go‑sdl3 replacement |
+| Pygame Zero feature | pgzgo equivalent (over go-sdl3) |
 |---|---|
-| `Actor("name", pos, anchor)` auto‑loads `images/name.png` | `Assets.Texture(name)` lazily loads + caches `*sdl.Texture` |
-| `screen.blit(name, (x,y))` | `Assets.Blit` → `renderer.RenderTexture` |
+| `Actor("name", …)` auto-loads a PNG | `Screen.Texture` — pgzgo's lazily-cached texture |
+| `screen.blit(name, (x,y))` | `Screen.Blit` / `BlitCentred` |
 | anchor tuples resolved internally | `Anchor` struct + `offset(w,h)` (§7) |
-| `keyboard.left`, `keyboard.space` | `sdl.GetKeyboardState()` snapshot in `input.go` |
-| `sounds.pop3.play()` via `getattr` | `Audio.PlaySound(name, count)` (§8) |
-| `music.play`/`music.set_volume` | `Audio.PlayMusic` with a looping mixer track |
-| the `update()`/`draw()` game loop | explicit `sdl.RunLoop` in `main.go` with a frame delay |
-| `draw_text` sprite font | `text.go` `drawTextX`/`drawTextCentre` |
+| `keyboard.left`, `keyboard.space` | `app.Keyboard.Held(sc)` snapshot |
+| `sounds.foo.play()` via `getattr` | `Audio.PlaySound(name, count)` |
+| `music.play`/`set_volume` | `Audio.PlayMusic` |
+| the `update()`/`draw()` loop | `app.Loop(update, draw)` — pgzgo's fixed-step, FPS-capped loop |
+| `draw_text` sprite font | its own `text.go` (pgzgo also offers `Screen.DrawText`) |
 
 ### The game loop and frame timing
 
-Pygame Zero calls `update()` and `draw()` at a fixed 60 Hz. The Go `main.go`
-runs the loop itself: poll events → `refreshKeys()` → clear → `update()` →
-`draw()` → present, then `sdl.Delay` to pad the frame out to `1000/60` ms. Both
+pgzgo's `app.Loop` runs the fixed-step, FPS-capped loop, calling `update` then `draw` each tick. Both
 games are frame‑count driven (`game.timer` / `g.timer` increments once per
 update; animation frames are `timer // interval`), so the timing model matches
 as long as the loop runs at 60 Hz.
@@ -348,8 +347,8 @@ rewrites are all forced by the language or framework:
   interface needed here);
 - list comprehensions → **typed slice filters**;
 - the `game` global → an **explicit `*Game` parameter** everywhere;
-- Pygame Zero's implicit asset/sound/font/loop machinery → **explicit go‑sdl3
-  plumbing** (`assets.go`, `audio.go`, `input.go`, `text.go`, `main.go`);
+- Pygame Zero's implicit asset/sound/font/loop machinery → the **pgzgo harness**
+  (the game keeps only its own sprite font in `text.go`);
 - the space‑bar latch, anchor tuples, and the `None` orb‑trap sentinel → small
   faithful Go equivalents.
 
